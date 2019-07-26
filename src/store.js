@@ -11,6 +11,27 @@ export default new Vuex.Store({
   mutations: {
     SET_PRODUCTS(state, products) {
       state.products = products;
+    },
+    PRODUCTS_SOLD(state, data) {
+      // update the product quantity in the state
+      const productIndex = this.getters.getProductIndex(data.product.id);
+      state.products[productIndex].quantity -= data.quantity;
+
+      // the line above is same as writing this
+      // state.products[productIndex].quantity = state.products[productIndex].quantity- data.quantity;
+
+      // Make API call to update the DB
+      axios
+        .put(
+          "https://sharmaa-week-10.firebaseio.com/products.json",
+          state.products
+        )
+        .then(response => {
+          console.log("your data was updated " + response.status);
+        })
+        .catch(error => {
+          console.log("there was an issue saving your data " + error.response);
+        });
     }
   },
   actions: {
@@ -21,6 +42,17 @@ export default new Vuex.Store({
           console.log(response.data);
           commit("SET_PRODUCTS", response.data);
         });
+    },
+    buyProducts({ commit }, { quantity, product }) {
+      commit("PRODUCTS_SOLD", { quantity, product });
+    }
+  },
+  getters: {
+    getProductById: state => id => {
+      return state.products.find(product => product.id === id);
+    },
+    getProductIndex: state => id => {
+      return state.products.findIndex(product => product.id === id);
     }
   }
 });

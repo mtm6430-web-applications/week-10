@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <div id="nav"><router-link to="/">Home</router-link>|</div>
+    <div id="nav">
+      <router-link to="/">Home</router-link>|
+      <router-link :to="{ name: 'products-inventory' }">Inventory</router-link>
+    </div>
     <router-view />
   </div>
 </template>
