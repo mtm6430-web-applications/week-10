@@ -16,9 +16,16 @@
           <td>{{ product.id }}</td>
           <td>{{ product.title }}</td>
           <td>{{ product.price }}</td>
-          <td>{{ product.quantity }}</td>
           <td>
-            <button class="btn btn-warning">Add</button>
+            <input type="number" v-model="product.quantity" />
+          </td>
+          <td>
+            <button
+              class="btn btn-warning"
+              @click="sendQuantity(product.quantity, product)"
+            >
+              Add
+            </button>
           </td>
         </tr>
       </tbody>
@@ -29,9 +36,24 @@
 import { mapState } from "vuex";
 import { mapActions } from "vuex";
 export default {
+  created() {
+    this.$store.dispatch("fetchData");
+  },
   computed: {
     ...mapState(["products"])
     // newComputed() {}
+  },
+  methods: {
+    ...mapActions(["updateQuantity"]),
+    sendQuantity(quantity, product) {
+      // send the quantity to store and update the state and database
+      if (quantity >= 0) {
+        this.updateQuantity({ quantity: quantity, product: product });
+      } else {
+        // thorw an error
+        console.log("quantity must be 0 or above");
+      }
+    }
   }
 };
 </script>
